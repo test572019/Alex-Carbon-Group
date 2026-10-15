@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alex Carbon Group · Import Pricing &amp; Profit</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Alex Carbon">
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#1b2430;--mut:#6b7686;--line:#e2e6ec;--acc:#0f766e;--accbg:#e4f3f1;--pos:#15803d;--neg:#b91c1c;--head:#eef1f5;--yel:#eab308;--yelbg:#fef9c3;--yelt:#854d0e;--red:#dc2626;--redbg:#fee2e2}
+@media (prefers-color-scheme:dark){:root{--bg:#10151c;--card:#18202a;--ink:#e8edf3;--mut:#94a0b0;--line:#2a3441;--acc:#2dd4bf;--accbg:#12302f;--pos:#4ade80;--neg:#f87171;--head:#1f2935;--yel:#facc15;--yelbg:#3a3210;--yelt:#fde047;--red:#f87171;--redbg:#3b1717}}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+h1{margin:0 0 2px;font-size:22px}
+.sub{margin:0 0 14px;color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.bar{display:flex;flex-wrap:wrap;gap:20px 36px;margin-bottom:12px}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mut{color:var(--mut);font-size:12px;margin-top:4px}
+.chk{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--ink);font-size:13px}
+input,select,button{font:inherit;color:var(--ink)}
+input,select{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+input:focus,select:focus{outline:2px solid var(--acc);outline-offset:-1px}
+input[type=checkbox]{width:auto}
+.bar input.num{width:130px}
+button{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--acc)}
+button.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.grid .card{padding:10px 12px}
+.grid b{display:block;font-size:18px;margin-top:2px}
+.grid span{font-size:12px;color:var(--mut)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:1620px;font-size:13px}
+th,td{padding:5px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--head);text-align:left;font-size:12px;position:sticky;top:0}
+td.c{text-align:center;color:var(--mut)}
+td.r{text-align:right;font-variant-numeric:tabular-nums}
+td input,td select{padding:4px 6px}
+td input.num{text-align:right;width:92px}
+td input.sm{width:100px}
+td input.nm{width:130px}
+td input.un{width:64px}
+td select{width:86px}
+.pos{color:var(--pos);font-weight:600}.neg{color:var(--neg);font-weight:600}
+button.x{padding:3px 8px;color:var(--neg)}
+.note{margin:10px 2px 0;font-size:12px;color:var(--mut)}
+[hidden]{display:none!important}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:9px;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:700}
+.bn{font-size:20px;font-weight:700;line-height:1.2}
+.bs{font-size:12px;color:var(--mut)}
+.tr{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tr .mut{margin:0}
+.fl{flex:1 1 220px}
+.lg{display:flex;justify-content:center;padding:8vh 0}
+.lgc{width:100%;max-width:340px}
+.lgc .brand{margin-bottom:16px}
+#cloud{margin-bottom:12px}
+@media (prefers-color-scheme:dark){.logo,button.pri,.tabs button.on{color:#04211f}}
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{padding:8px 18px;font-weight:600}
+.tabs button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.tb-n{display:inline-block;min-width:18px;padding:0 6px;margin-left:8px;border-radius:9px;font-size:11px;line-height:18px;text-align:center;color:#fff}
+.tb-n.n-red{background:var(--red)}.tb-n.n-yel{background:var(--yel);color:#3b2f00}
+/* credit */
+.cc{border-left:6px solid var(--line);margin-bottom:12px}
+.cc.s-red{border-left-color:var(--red)}.cc.s-yel{border-left-color:var(--yel)}.cc.s-grn{border-left-color:var(--pos)}
+.dot{width:16px;height:16px;border-radius:50%;background:var(--mut);flex:none}
+.dot.s-red{background:var(--red)}.dot.s-yel{background:var(--yel)}.dot.s-grn{background:var(--pos)}
+.bdg{padding:3px 11px;border-radius:12px;font-size:12px;font-weight:600;border:1px solid var(--line);color:var(--mut);white-space:nowrap}
+.bdg.s-red{background:var(--redbg);color:var(--red);border-color:var(--red)}
+.bdg.s-yel{background:var(--yelbg);color:var(--yelt);border-color:var(--yel)}
+.bdg.s-grn{background:var(--accbg);color:var(--pos);border-color:var(--pos)}
+.cch{margin-bottom:6px}
+.cf{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0 12px}
+.wrap2{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table.gt{min-width:0;width:100%}
+.gt td input.nm2{width:100%;min-width:150px}
+.gt td input.num{width:100px}
+.cs{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.cs div{background:var(--head);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--mut)}
+.cs b{display:block;font-size:15px;color:var(--ink);margin-top:1px}
+.r-red td{background:var(--redbg)}.r-red td.st{color:var(--red);font-weight:600}
+.r-yel td{background:var(--yelbg)}.r-yel td.st{color:var(--yelt);font-weight:600}
+.r-grn td.st{color:var(--pos);font-weight:600}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+.lgd .dot{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin-right:5px}
+.grid .card b.neg{color:var(--red)}
+th.dy{background:var(--accbg)}
+#hist tr[data-day]{cursor:pointer}#hist tr[data-day]:hover td{background:var(--head)}#hist tr.cur td{font-weight:700}
+@media (max-width:700px){input,select{font-size:16px}}
+</style>
+</head>
+<body>
+<div id="login" class="lg" hidden><div class="card lgc">
+  <div class="brand"><div class="logo">AC</div><div><div class="bn">Alex Carbon Group</div><div class="bs">Import Pricing &amp; Profit</div></div></div>
+  <label>Username</label>
+  <input id="lu" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+  <label style="margin-top:10px">Password</label>
+  <input id="lp" type="password" autocomplete="current-password">
+  <button class="pri" id="lgo" style="width:100%;margin-top:14px">Sign in</button>
+  <div class="neg" id="lerr" style="min-height:18px;margin-top:8px;font-size:13px"></div>
+</div></div>
+
+<div id="app" hidden>
+<div class="top">
+  <div class="brand"><div class="logo">AC</div><div><div class="bn">Alex Carbon Group</div><div class="bs">Import Pricing &amp; Profit</div></div></div>
+  <div class="tr"><span id="sync" class="mut"></span><button id="cloudbtn">Cloud sync</button><button id="logout">Log out</button></div>
+</div>
+
+<div class="card" id="cloud" hidden>
+  <b>Cloud sync</b> <span class="mut">— keeps your computer and iPhone showing the same data</span>
+  <div class="mut" style="color:var(--neg)">Use a JSONBin account made only for this system. Do not use the key from the attendance system.</div>
+  <div class="row" style="margin-top:10px">
+    <input class="fl" id="ckey" placeholder="JSONBin Master Key" autocomplete="off" autocapitalize="none" spellcheck="false">
+    <input class="fl" id="cbin" placeholder="Bin ID (leave empty the first time)" autocomplete="off" autocapitalize="none" spellcheck="false">
+  </div>
+  <div class="row" style="margin-top:8px"><button class="pri" id="cconnect">Connect</button><button id="csync">Sync now</button><button id="clink">Copy phone link</button><button id="cdisc">Disconnect</button></div>
+  <div class="mut" id="cmsg"></div>
+</div>
+
+<div class="tabs"><button id="tabP" class="on">Pricing</button><button id="tabC">Credit<span id="tabn" class="tb-n" hidden></span></button></div>
+
+<div id="v-pricing">
+<div class="card bar">
+  <div>
+    <label>USD → EGP rate</label>
+    <div class="row"><span>1 USD =</span><input id="rate" class="num" type="number" step="0.0001" min="0"><span>EGP</span><button id="live">Get live rate</button></div>
+    <div class="mut" id="rstat"></div>
+  </div>
+  <div>
+    <label>Extra costs in USD (Alibaba fees, shipping, customs…)</label>
+    <input id="extra" class="num" type="number" step="any" min="0">
+    <label class="chk"><input id="spread" type="checkbox"> Add extra costs into each item's cost (spread by value)</label>
+  </div>
+</div>
+
+<div class="card bar">
+  <div>
+    <label>Sales day — the “Sold (day)” column records sales for this date</label>
+    <div class="row"><input id="sday" type="date" style="width:auto"><button id="stoday">Today</button></div>
+    <div class="mut">Stock left = original stock minus everything sold on all days. Revenue and profit use the selling price and cost at the time you enter the sale.</div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card"><span>Goods (USD)</span><b id="s-goods">0</b></div>
+  <div class="card"><span>Total cost (USD)</span><b id="s-tot">0</b></div>
+  <div class="card"><span>Total cost (EGP)</span><b id="s-cost">0</b></div>
+  <div class="card"><span>Expected sales (EGP)</span><b id="s-sales">0</b></div>
+  <div class="card"><span>Expected profit (EGP)</span><b id="s-profit">0</b></div>
+  <div class="card"><span>Overall margin</span><b id="s-margin">0%</b></div>
+  <div class="card"><span>Units sold (selected day)</span><b id="d-u">0</b></div>
+  <div class="card"><span>Revenue (selected day, EGP)</span><b id="d-rev">0</b></div>
+  <div class="card"><span>Profit (selected day, EGP)</span><b id="d-profit">0</b></div>
+</div>
+
+<div class="tools">
+  <button class="pri" id="add">+ Add item</button>
+  <button id="csv">Export CSV</button>
+  <button id="reset">Reset to original list</button>
+  <button id="wipe" style="color:var(--neg)">Reset all data</button>
+</div>
+
+<div class="wrap">
+<table>
+  <thead><tr>
+    <th>#</th><th>Item</th><th>Size (mm)</th><th>Stock (original)</th><th>Unit</th><th class="dy">Sold (day)</th><th class="dy">Stock left</th>
+    <th>Unit price (USD)</th><th>Value (USD)</th><th>Cost / unit (EGP)</th>
+    <th>Add profit %</th><th>Selling price / unit (EGP)</th><th>Profit / unit (EGP)</th><th>Margin %</th>
+    <th>Total selling (EGP)</th><th>Total profit (EGP)</th><th class="dy">Day revenue (EGP)</th><th class="dy">Day profit (EGP)</th><th></th>
+  </tr></thead>
+  <tbody id="tb"></tbody>
+</table>
+</div>
+<p class="note">“Add profit %” is added on top of your cost and fills the selling price. You can also type your own selling price (the list then shows Custom). Margin % = profit ÷ selling price.</p>
+<div class="card" style="margin-top:12px"><b>Daily sales history</b> <span class="mut">— click a day to open it</span>
+  <div class="wrap2" style="margin-top:8px"><table class="gt"><thead><tr><th>Day</th><th>Units sold</th><th>Revenue (EGP)</th><th>Profit (EGP)</th></tr></thead><tbody id="hist"></tbody></table></div>
+</div>
+<datalist id="units"><option value="sets"><option value="pc"><option value="kg"><option value="m"></datalist>
+</div><!-- /v-pricing -->
+
+<div id="v-credit" hidden>
+  <div class="grid">
+    <div class="card"><span>Total credit sales (EGP)</span><b id="c-tot">0</b></div>
+    <div class="card"><span>Collected so far (EGP)</span><b id="c-coll">0</b></div>
+    <div class="card"><span>Outstanding (EGP)</span><b id="c-bal">0</b></div>
+    <div class="card"><span>Overdue amount (EGP)</span><b id="c-od" class="neg">0</b></div>
+    <div class="card"><span>Customers overdue</span><b id="c-red">0</b></div>
+    <div class="card"><span>Customers due soon</span><b id="c-yel">0</b></div>
+  </div>
+  <div class="card bar">
+    <div>
+      <label>Yellow warning: show it when a payment is due within</label>
+      <div class="row"><input id="cwarn" class="num" type="number" min="0" max="30" step="1"><span>day(s) (0 = only on the due date)</span></div>
+    </div>
+    <div>
+      <label>Show</label>
+      <select id="cfilter" style="width:auto;min-width:180px"><option value="all">All customers</option><option value="late">Overdue only (red)</option><option value="soon">Due soon only (yellow)</option><option value="open">With a balance due</option><option value="done">Fully paid</option></select>
+    </div>
+  </div>
+  <div class="tools"><button class="pri" id="cnew">+ New credit sale</button><button id="ccsv">Export CSV</button></div>
+  <div id="cl"></div>
+  <div class="note lgd">
+    <span><span class="dot s-yel"></span>Yellow: a weekly payment is due soon</span>
+    <span><span class="dot s-red"></span>Red: a weekly payment deadline was missed</span>
+    <span><span class="dot s-grn"></span>Green: on track or fully paid</span>
+  </div>
+  <p class="note">Weekly payments are the balance after the down payment, split equally over the weeks you choose (any rounding goes in the last week). Tick “Paid” when a payment is received. Changing the goods, down payment, or number of weeks recalculates the schedule.</p>
+</div>
+</div>
+
+<script>
+// ---- login (change here if needed) ----
+const LOGIN={user:"karim",pass:"1234"};
+// ---- cloud sync: optional. Paste your JSONBin key + bin id once so every device connects by itself ----
+const CLOUD={key:"$2a$10$.Qwb8NrSX4.u2VWp5Q/8POtSp5bxuzibdOqvC5Xz6ufvkEYSRWkqa",bin:"6acf6472ac6210605a3077d0"};
+const AUTH="alex_auth", CFGK="alex_cloud";
+(function(){ // a phone link like page.html#sync=... stores the connection, then hides it
+  const m=location.hash.match(/#sync=([^&]+)/);
+  if(m){try{const [k,b]=atob(decodeURIComponent(m[1])).split("|");if(k&&b)localStorage.setItem(CFGK,JSON.stringify({key:k,bin:b}));}catch(e){}
+    try{history.replaceState(null,"",location.pathname+location.search);}catch(e){}}
+})();
+const PCTS=[10,15,20,25,30,40,50,75,100];
+const SEED=[
+ ["CF665","5*8*12",5000,"sets",0.09],["CF712","5*8*15",3000,"sets",0.09],["CF642","5*10*17",3000,"sets",0.10],
+ ["CF766","6*10*12.5",3000,"sets",0.10],["CF707","6*10*16",5000,"sets",0.09],["CF020","6.3*16*22",5000,"sets",0.12],
+ ["CE046","6.3*6.3*16",1000,"sets",0.10],["CF951","8*14*17",3000,"sets",0.11],["73% Cu","12.5*12.5*40",1000,"pc",0.95],
+ ["brush holder","20*20*40",15,"pc",37],["carbon plate","400*300*4",15,"pc",17],["carbon plate","400*300*5",15,"pc",20],
+ ["carbon plate","400*300*6",10,"pc",22],["carbon rod","φ65*100",15,"pc",6.5],["carbon rod","φ85*100",15,"pc",10],
+ ["carbon brush","8*12*40",500,"sets",0.55],["carbon brush","8*14*40",500,"sets",0.55],["carbon brush","6*11*40",500,"sets",0.50],
+ ["carbon brush","10*12.5*40",250,"pc",0.60],["carbon brush","12.5*25*40",200,"pc",1.30]
+];
+const KEY="import_pricing_v1";
+let nid=1, S=load();
+
+function newItem(r){return {id:nid++,name:r[0],size:r[1],qty:r[2],unit:r[3],price:r[4],mode:"pct",pct:20,sell:0};}
+function load(){
+  try{const j=localStorage.getItem(KEY);
+    if(j){const o=JSON.parse(j);
+      if(o&&Array.isArray(o.items)){nid=1+Math.max(0,...o.items.map(i=>i.id));o.credits=Array.isArray(o.credits)?o.credits:[];if(!o.sales||typeof o.sales!=="object")o.sales={};if(o.warn==null)o.warn=2;return o;}}}catch(e){}
+  return {items:SEED.map(newItem),rate:0,prev:0,rateDate:"",manual:false,extra:60,spread:true,credits:[],warn:2,sales:{}};
+}
+function save(d=true){ // d=false for things that stay on this device (the exchange rate)
+  if(d) S.ts=Date.now();
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  if(d) queuePush();
+}
+
+const $=id=>document.getElementById(id);
+const n=v=>{v=parseFloat(v);return isNaN(v)?0:v;};
+const fmt=(v,d=2)=>v.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const goods=()=>S.items.reduce((a,i)=>a+n(i.qty)*n(i.price),0);
+
+function calc(i){
+  const g=goods(), f=(S.spread&&g>0)?n(S.extra)/g:0;
+  const cost=n(i.price)*(1+f)*n(S.rate);
+  const sell=i.mode==="pct"?cost*(1+n(i.pct)/100):n(i.sell);
+  const profit=sell-cost;
+  return {val:n(i.qty)*n(i.price),cost,sell,profit,margin:sell>0?profit/sell*100:0};
+}
+
+function render(){
+  const opts=PCTS.map(p=>`<option value="${p}">${p}%</option>`).join("")+`<option value="custom">Custom</option>`;
+  $("tb").innerHTML=S.items.map((i,x)=>`<tr data-id="${i.id}">
+    <td class="c">${x+1}</td>
+    <td><input class="nm" data-k="name" value="${esc(i.name)}"></td>
+    <td><input class="sm" data-k="size" value="${esc(i.size)}"></td>
+    <td><input class="num" data-k="qty" type="number" min="0" step="any" value="${esc(i.qty)}"></td>
+    <td><input class="un" data-k="unit" list="units" value="${esc(i.unit)}"></td>
+    <td><input class="num" data-s type="number" min="0" step="any" placeholder="0"></td>
+    <td class="r" data-o="left"></td>
+    <td><input class="num" data-k="price" type="number" min="0" step="any" value="${esc(i.price)}"></td>
+    <td class="r" data-o="val"></td>
+    <td class="r" data-o="cost"></td>
+    <td><select data-k="pct">${opts}</select></td>
+    <td><input class="num" data-k="sell" type="number" min="0" step="any"></td>
+    <td class="r" data-o="profit"></td>
+    <td class="r" data-o="margin"></td>
+    <td class="r" data-o="tsell"></td>
+    <td class="r" data-o="tprofit"></td>
+    <td class="r" data-o="drev"></td>
+    <td class="r" data-o="dprofit"></td>
+    <td><button class="x" data-del title="Remove item">✕</button></td>
+  </tr>`).join("");
+  refresh();
+}
+
+function refresh(){
+  const act=document.activeElement, ok=n(S.rate)>0;
+  let tc=0, ts=0;
+  document.querySelectorAll("#tb tr").forEach(tr=>{
+    const it=S.items.find(i=>i.id==tr.dataset.id); if(!it) return;
+    const c=calc(it), q=n(it.qty);
+    const set=(o,t,cls)=>{const e=tr.querySelector(`[data-o=${o}]`);e.textContent=t;if(cls!==undefined)e.className="r "+cls;};
+    const show=v=>ok?fmt(v):"—";
+    set("val",fmt(c.val));
+    set("cost",show(c.cost));
+    set("profit",show(c.profit),ok?(c.profit>=0?"pos":"neg"):"");
+    set("margin",ok?fmt(c.margin,1)+"%":"—",ok?(c.margin>=0?"pos":"neg"):"");
+    set("tsell",show(c.sell*q));
+    set("tprofit",show(c.profit*q),ok?(c.profit>=0?"pos":"neg"):"");
+    const si=tr.querySelector("[data-k=sell]"), se=tr.querySelector("[data-k=pct]");
+    if(si!==act) si.value=(it.mode==="manual"||ok)?c.sell.toFixed(2):"";
+    if(se!==act) se.value=it.mode==="pct"?String(it.pct):"custom";
+    ts+=c.sell*q;
+  });
+  const g=goods(), tot=g+n(S.extra); tc=tot*n(S.rate);
+  const profit=ts-tc;
+  $("s-goods").textContent="$"+fmt(g);
+  $("s-tot").textContent="$"+fmt(tot);
+  $("s-cost").textContent=ok?fmt(tc):"—";
+  $("s-sales").textContent=ok?fmt(ts):"—";
+  $("s-profit").textContent=ok?fmt(profit):"—";
+  $("s-margin").textContent=(ok&&ts>0)?fmt(profit/ts*100,1)+"%":"—";
+  refreshSales();
+}
+
+$("tb").addEventListener("input",e=>{
+  const el=e.target, tr=el.closest("tr"), k=el.dataset.k, isS=el.dataset.s!==undefined; if(!tr||(!k&&!isS)) return;
+  const it=S.items.find(i=>i.id==tr.dataset.id); if(!it) return;
+  if(isS){setSold(it,el.value);refresh();save();return;}
+  if(k==="pct"){
+    if(el.value==="custom"){it.sell=calc(it).sell;it.mode="manual";}
+    else{it.mode="pct";it.pct=n(el.value);}
+  }else if(k==="sell"){it.mode="manual";it.sell=n(el.value);}
+  else it[k]=el.value;
+  refresh();save();
+});
+$("tb").addEventListener("click",e=>{
+  const b=e.target.closest("[data-del]"); if(!b) return;
+  const id=b.closest("tr").dataset.id;
+  if(!confirm("Remove this item?")) return;
+  S.items=S.items.filter(i=>i.id!=id);render();save();
+});
+$("add").onclick=()=>{
+  S.items.push({id:nid++,name:"",size:"",qty:0,unit:"pc",price:0,mode:"pct",pct:20,sell:0});
+  render();save();
+  const rows=document.querySelectorAll("#tb tr"); rows[rows.length-1].querySelector("[data-k=name]").focus();
+};
+$("reset").onclick=()=>{
+  if(!confirm("Replace the current list with the original 20 items? Your edits will be lost.")) return;
+  S.items=SEED.map(newItem);render();save();
+};
+$("extra").oninput=e=>{S.extra=n(e.target.value);refresh();save();};
+$("spread").onchange=e=>{S.spread=e.target.checked;refresh();save();};
+$("rate").oninput=e=>{S.rate=n(e.target.value);S.manual=true;rateStatus();refresh();save(false);};
+$("live").onclick=()=>fetchRate();
+
+function rateStatus(){
+  let t=S.manual?"Manual rate (not updated automatically)":(S.rate>0?"Live rate"+(S.rateDate?" · "+S.rateDate:""):"No rate yet");
+  if(!S.manual&&S.prev>0&&S.rate>0){
+    const d=S.rate-S.prev;
+    if(Math.abs(d)>1e-9) t+=" · "+(d>0?"▲ ":"▼ ")+fmt(Math.abs(d),4)+" vs previous rate ("+fmt(S.prev,4)+")";
+  }
+  $("rstat").textContent=t;
+}
+
+async function fetchRate(){
+  $("rstat").textContent="Checking today's rate…";
+  let r=0,d="";
+  try{const j=await (await fetch("https://open.er-api.com/v6/latest/USD")).json();
+    if(j&&j.rates&&j.rates.EGP){r=+j.rates.EGP;d=(j.time_last_update_utc||"").slice(0,16);}}catch(e){}
+  if(!r){try{const j=await (await fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json")).json();
+    if(j&&j.usd&&j.usd.egp){r=+j.usd.egp;d=j.date||"";}}catch(e){}}
+  if(!r){
+    rateStatus();
+    $("rstat").textContent+=n(S.rate)>0?" — could not reach the rate service, using the last saved rate.":" — could not reach the rate service, type today's rate in the box.";
+    return;
+  }
+  r=Math.round(r*10000)/10000;
+  if(S.rate>0&&Math.abs(r-S.rate)>1e-9) S.prev=S.rate;
+  S.rate=r;S.manual=false;S.rateDate=d;
+  $("rate").value=r;rateStatus();refresh();save(false);
+}
+
+$("csv").onclick=()=>{
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const sm=soldMap(), dayd=(S.sales||{})[getDay()]||{};
+  const rows=[["Item","Size (mm)","Qty","Unit","Unit price USD","Value USD","Cost/unit EGP","Profit % added","Selling price/unit EGP","Profit/unit EGP","Margin %","Total selling EGP","Total profit EGP","Sold (day)","Stock left","Day revenue EGP","Day profit EGP"]];
+  S.items.forEach(i=>{
+    const c=calc(i),qy=n(i.qty), e=dayd[i.id], v=e?entryVals(i,e):null;
+    rows.push([i.name,i.size,qy,i.unit,n(i.price),c.val.toFixed(2),c.cost.toFixed(2),i.mode==="pct"?i.pct+"%":"Custom",c.sell.toFixed(2),c.profit.toFixed(2),c.margin.toFixed(1),(c.sell*qy).toFixed(2),(c.profit*qy).toFixed(2),e?n(e.q):0,n(i.qty)-(sm[i.id]||0),v&&v.rev!=null?v.rev.toFixed(2):"",v&&v.profit!=null?v.profit.toFixed(2):""]);
+  });
+  const b=new Blob(["\ufeff"+rows.map(r=>r.map(q).join(",")).join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);
+  a.download="pricing-"+new Date().toISOString().slice(0,10)+".csv";a.click();
+};
+
+$("wipe").onclick=()=>{
+  if(!confirm("Reset ALL pricing data? This erases every pricing item and setting here and on your other devices. Credit records and the daily sales history are not affected.")) return;
+  if(!confirm("Are you absolutely sure? This cannot be undone.")) return;
+  S.items=[];S.extra=0;S.spread=true;
+  $("extra").value=0;$("spread").checked=true;
+  render();save();
+};
+
+// ================= credit sales =================
+const todayD=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());};
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const pd=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null;};
+const addD=(d,k)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+k);
+const dd=(a,b)=>Math.round((a-b)/864e5);
+const fd=d=>d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+const plural=(k,w)=>k+" "+w+(k===1?"":"s");
+let cfilter="all";
+
+function newCredit(){
+  const t=todayD();
+  return {id:1+Math.max(0,...S.credits.map(c=>c.id)),name:"",phone:"",date:iso(t),first:iso(addD(t,7)),weeks:4,down:0,
+    lines:[{name:"",qty:1,unit:"pc",price:0}],paid:[]};
+}
+
+function ccalc(c){
+  const total=c.lines.reduce((a,l)=>a+n(l.qty)*n(l.price),0);
+  const down=Math.min(Math.max(0,n(c.down)),total);
+  const remC=Math.round((total-down)*100);
+  const w=Math.max(1,Math.min(104,Math.floor(n(c.weeks))||1));
+  const first=pd(c.first), sched=[];
+  if(remC>0){
+    const base=Math.floor(remC/w);
+    for(let k=0;k<w;k++){
+      const p=(c.paid&&c.paid[k])||"";
+      sched.push({k,amt:(k===w-1?remC-base*(w-1):base)/100,due:first?addD(first,7*k):null,paid:!!p,paidOn:p});
+    }
+  }
+  const t=todayD(), warn=Math.max(0,n(S.warn));
+  let paidAmt=0,balance=0,overdueAmt=0;
+  sched.forEach(s=>{
+    if(s.paid){s.cls="grn";s.txt="Paid";paidAmt+=s.amt;return;}
+    balance+=s.amt;
+    if(!s.due){s.cls="ok";s.txt="No date set";return;}
+    const d=dd(s.due,t); s.days=d;
+    if(d<0){s.cls="red";s.txt="Overdue "+plural(-d,"day");overdueAmt+=s.amt;}
+    else if(d<=warn){s.cls="yel";s.txt=d===0?"Due today":"Due in "+plural(d,"day");}
+    else{s.cls="ok";s.txt="Due in "+plural(d,"day");}
+  });
+  const unpaid=sched.filter(s=>!s.paid), red=unpaid.filter(s=>s.cls==="red"), yel=unpaid.filter(s=>s.cls==="yel");
+  let cls="none",txt="";
+  if(total<=0){txt="No goods yet";}
+  else if(!unpaid.length){cls="grn";txt=remC<=0?"Paid in full":"Settled";}
+  else if(red.length){cls="red";txt="Overdue · "+plural(red.length,"payment")+" · "+fmt(overdueAmt)+" EGP";}
+  else if(yel.length){cls="yel";txt=yel[0].txt+" · "+fmt(yel[0].amt)+" EGP";}
+  else if(unpaid[0].due){cls="grn";txt="On track · next payment in "+plural(unpaid[0].days,"day");}
+  else{txt="Set the first due date";}
+  return {total,down,rem:remC/100,sched,paidAmt,balance,overdueAmt,cls,txt,open:unpaid.length>0};
+}
+
+function cardHTML(c){
+  const picks=S.items.filter(i=>String(i.name||"").trim()).map(i=>`<option value="${i.id}">${esc(i.name)}${i.size?" · "+esc(i.size):""}</option>`).join("");
+  const lines=c.lines.map((l,i)=>`<tr>
+    <td><input class="nm2" data-l="name" data-li="${i}" placeholder="Goods" value="${esc(l.name)}"></td>
+    <td><input class="num" data-l="qty" data-li="${i}" type="number" min="0" step="any" value="${esc(l.qty)}"></td>
+    <td><input class="un" data-l="unit" data-li="${i}" list="units" value="${esc(l.unit)}"></td>
+    <td><input class="num" data-l="price" data-li="${i}" type="number" min="0" step="any" value="${esc(l.price)}"></td>
+    <td class="r" data-o="lt${i}"></td>
+    <td><button class="x" data-dl="${i}" title="Remove line">✕</button></td></tr>`).join("");
+  return `<div class="card cc" data-cid="${c.id}">
+  <div class="row cch"><span class="dot"></span>
+    <input class="fl" data-k="name" placeholder="Customer name" value="${esc(c.name)}">
+    <input class="fl" data-k="phone" placeholder="Phone (optional)" value="${esc(c.phone)}">
+    <span class="bdg"></span><button class="x" data-del title="Delete this credit sale">✕</button></div>
+  <div class="cf">
+    <div><label>Sale date</label><input type="date" data-k="date" value="${esc(c.date)}"></div>
+    <div><label>Weekly payments (number of weeks)</label><input type="number" min="1" max="104" step="1" data-k="weeks" value="${esc(c.weeks)}"></div>
+    <div><label>First weekly due date</label><input type="date" data-k="first" value="${esc(c.first)}"></div>
+    <div><label>Down payment (EGP)</label><input type="number" min="0" step="any" data-k="down" value="${esc(c.down)}"></div>
+  </div>
+  <label>Goods sold</label>
+  <div class="wrap2"><table class="gt"><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Price / unit (EGP)</th><th>Total (EGP)</th><th></th></tr></thead><tbody>${lines}</tbody></table></div>
+  <div class="row" style="margin-top:8px"><button data-addline>+ Add line</button>
+    <select data-pick style="width:auto;max-width:280px"><option value="">+ Add from price list…</option>${picks}</select></div>
+  <div class="cs">
+    <div>Total amount<b data-o="total"></b></div><div>Down payment<b data-o="down"></b></div>
+    <div>Remaining after down payment<b data-o="rem"></b></div><div>Paid in instalments<b data-o="paid"></b></div>
+    <div>Balance due<b data-o="bal"></b></div>
+  </div>
+  <label style="margin-top:12px">Weekly payment schedule</label>
+  <div class="wrap2 sch"></div>
+</div>`;
+}
+
+function refreshCard(c){
+  const el=document.querySelector(`.cc[data-cid="${c.id}"]`); if(!el) return;
+  const r=ccalc(c), put=(o,v)=>{const e=el.querySelector(`[data-o=${o}]`);if(e)e.textContent=v;};
+  c.lines.forEach((l,i)=>put("lt"+i,fmt(n(l.qty)*n(l.price))));
+  put("total",fmt(r.total));put("down",fmt(r.down));put("rem",fmt(r.rem));put("paid",fmt(r.paidAmt));put("bal",fmt(r.balance));
+  el.className="card cc s-"+r.cls;
+  el.querySelector(".dot").className="dot s-"+r.cls;
+  const b=el.querySelector(".bdg"); b.className="bdg s-"+r.cls; b.textContent=r.txt;
+  el.querySelector(".sch").innerHTML=r.sched.length?
+    `<table class="gt"><thead><tr><th>Week</th><th>Due date</th><th>Amount (EGP)</th><th>Status</th><th>Paid</th></tr></thead><tbody>`+
+    r.sched.map(s=>`<tr class="r-${s.cls}"><td class="c">${s.k+1}</td><td>${s.due?fd(s.due):"—"}</td><td class="r">${fmt(s.amt)}</td><td class="st">${s.txt}</td>
+      <td><label class="chk" style="margin:0"><input type="checkbox" data-pay="${s.k}" ${s.paid?"checked":""}>${s.paid&&pd(s.paidOn)?"on "+fd(pd(s.paidOn)):"Mark paid"}</label></td></tr>`).join("")+`</tbody></table>`:
+    `<div class="mut" style="padding:10px">${r.total>0?"Nothing left to pay after the down payment.":"Add the goods sold to build the schedule."}</div>`;
+}
+
+function summ(){
+  let tot=0,coll=0,bal=0,od=0,red=0,yel=0;
+  S.credits.forEach(c=>{const r=ccalc(c);tot+=r.total;coll+=r.down+r.paidAmt;bal+=r.balance;od+=r.overdueAmt;if(r.cls==="red")red++;if(r.cls==="yel")yel++;});
+  $("c-tot").textContent=fmt(tot);$("c-coll").textContent=fmt(coll);$("c-bal").textContent=fmt(bal);
+  $("c-od").textContent=fmt(od);$("c-red").textContent=red;$("c-yel").textContent=yel;
+  const tn=$("tabn"); tn.textContent=red||yel||""; tn.className="tb-n "+(red?"n-red":"n-yel"); tn.hidden=!(red||yel);
+}
+function renderCredit(){
+  const list=S.credits.filter(c=>{
+    if(cfilter==="all") return true; const r=ccalc(c);
+    return (cfilter==="late"&&r.cls==="red")||(cfilter==="soon"&&r.cls==="yel")||(cfilter==="open"&&r.open)||(cfilter==="done"&&!r.open&&r.total>0);
+  });
+  $("cl").innerHTML=list.length?list.map(cardHTML).join(""):
+    `<div class="card mut">${S.credits.length?"No customers match this filter.":"No credit sales yet. Press “+ New credit sale” to add the first one."}</div>`;
+  list.forEach(refreshCard);summ();
+}
+function refreshAllCredit(){S.credits.forEach(refreshCard);summ();}
+function showTab(t){
+  $("v-pricing").hidden=t!=="p";$("v-credit").hidden=t!=="c";
+  $("tabP").classList.toggle("on",t==="p");$("tabC").classList.toggle("on",t==="c");
+  if(t==="c") refreshAllCredit();
+}
+const cOf=el=>{const e=el.closest(".cc");return e?S.credits.find(x=>x.id==e.dataset.cid):null;};
+const focusIn=(c,sel)=>{const e=document.querySelector(`.cc[data-cid="${c.id}"] ${sel}`);if(e)e.focus();};
+
+$("tabP").onclick=()=>showTab("p");
+$("tabC").onclick=()=>showTab("c");
+$("cwarn").oninput=e=>{S.warn=Math.max(0,n(e.target.value));refreshAllCredit();save();};
+$("cfilter").onchange=e=>{cfilter=e.target.value;renderCredit();};
+$("cnew").onclick=()=>{
+  cfilter="all";$("cfilter").value="all";
+  const c=newCredit();S.credits.unshift(c);renderCredit();save();focusIn(c,"[data-k=name]");
+};
+$("cl").addEventListener("input",e=>{
+  const el=e.target,c=cOf(el); if(!c) return;
+  if(el.dataset.k){
+    const k=el.dataset.k;
+    if(k==="date"){ // keep "first due = sale date + 7 days" in step while the user hasn't changed it
+      const old=pd(c.date), oldFirst=old?iso(addD(old,7)):null; c.date=el.value;
+      const nd=pd(el.value);
+      if(nd&&c.first===oldFirst){c.first=iso(addD(nd,7));el.closest(".cc").querySelector("[data-k=first]").value=c.first;}
+    }else c[k]=el.value;
+  }else if(el.dataset.l){c.lines[+el.dataset.li][el.dataset.l]=el.value;}
+  else return;
+  refreshCard(c);summ();save();
+});
+$("cl").addEventListener("change",e=>{
+  const el=e.target,c=cOf(el); if(!c) return;
+  if(el.dataset.pay!==undefined){
+    const k=+el.dataset.pay; c.paid=c.paid||[]; c.paid[k]=el.checked?iso(todayD()):"";
+    refreshCard(c);summ();save();
+  }else if(el.dataset.pick!==undefined){
+    const it=S.items.find(i=>i.id==el.value); if(!it) return;
+    const price=n(S.rate)>0?Math.round(calc(it).sell*100)/100:0;
+    c.lines.push({name:(it.name+(it.size?" "+it.size:"")).trim(),qty:1,unit:it.unit||"pc",price});
+    renderCredit();save();focusIn(c,`[data-l=qty][data-li="${c.lines.length-1}"]`);
+  }
+});
+$("cl").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return; const c=cOf(b); if(!c) return;
+  if(b.hasAttribute("data-del")){
+    if(!confirm("Delete this credit sale"+(c.name?" for "+c.name:"")+"? This cannot be undone.")) return;
+    S.credits=S.credits.filter(x=>x!==c);renderCredit();save();
+  }else if(b.hasAttribute("data-addline")){
+    c.lines.push({name:"",qty:1,unit:"pc",price:0});renderCredit();save();
+    focusIn(c,`[data-l=name][data-li="${c.lines.length-1}"]`);
+  }else if(b.dataset.dl!==undefined){
+    c.lines.splice(+b.dataset.dl,1);renderCredit();save();
+  }
+});
+$("ccsv").onclick=()=>{
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const rows=[["Customer","Phone","Sale date","Goods","Total EGP","Down payment EGP","Week","Due date","Amount EGP","Paid on","Status"]];
+  S.credits.forEach(c=>{
+    const r=ccalc(c), g=c.lines.map(l=>n(l.qty)+" "+(l.unit||"")+" "+l.name+" @ "+n(l.price)).join("; ");
+    const base=[c.name,c.phone,c.date,g,r.total.toFixed(2),r.down.toFixed(2)];
+    if(!r.sched.length) rows.push([...base,"","","","",r.txt]);
+    else r.sched.forEach(s=>rows.push([...base,s.k+1,s.due?iso(s.due):"",s.amt.toFixed(2),s.paid?s.paidOn:"",s.txt]));
+  });
+  const b=new Blob(["\ufeff"+rows.map(r=>r.map(q).join(",")).join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);
+  a.download="credit-"+new Date().toISOString().slice(0,10)+".csv";a.click();
+};
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&started)refreshAllCredit();});
+
+// ================= daily sales =================
+const getDay=()=>$("sday").value||iso(todayD());
+function soldMap(){const m={};for(const dk in (S.sales||{}))for(const id in S.sales[dk])m[id]=(m[id]||0)+n(S.sales[dk][id].q);return m;}
+function setSold(it,v){ // records the quantity sold on the selected day, with the price and cost at this moment
+  const day=getDay(), q=n(v); S.sales=S.sales||{};
+  const d=S.sales[day]=S.sales[day]||{};
+  if(q<=0){delete d[it.id];if(!Object.keys(d).length)delete S.sales[day];}
+  else{const c=calc(it);d[it.id]=n(S.rate)>0?{q,s:c.sell,c:c.cost}:{q};}
+}
+function entryVals(it,e){
+  const q=n(e.q); let sell,cost;
+  if(e.s!=null){sell=n(e.s);cost=n(e.c);}
+  else if(it&&n(S.rate)>0){const c=calc(it);sell=c.sell;cost=c.cost;}
+  else return {q,rev:null,profit:null};
+  return {q,rev:q*sell,profit:q*(sell-cost)};
+}
+function dayStats(day){
+  let u=0,rev=0,pr=0,partial=false; const d=(S.sales||{})[day]||{};
+  for(const id in d){const v=entryVals(S.items.find(i=>i.id==id),d[id]);u+=v.q;if(v.rev==null)partial=true;else{rev+=v.rev;pr+=v.profit;}}
+  return {u,rev,pr,partial};
+}
+function refreshSales(){
+  const act=document.activeElement, day=getDay(), d=(S.sales||{})[day]||{}, sm=soldMap();
+  document.querySelectorAll("#tb tr").forEach(tr=>{
+    const it=S.items.find(i=>i.id==tr.dataset.id); if(!it) return;
+    const left=Math.round((n(it.qty)-(sm[it.id]||0))*1e4)/1e4, e=d[it.id], v=e?entryVals(it,e):null;
+    const set=(o,t,cls)=>{const x=tr.querySelector(`[data-o=${o}]`);x.textContent=t;x.className="r "+(cls||"");};
+    set("left",fmt(left,Number.isInteger(left)?0:2),left<0?"neg":"");
+    set("drev",v?(v.rev==null?"—":fmt(v.rev)):"");
+    set("dprofit",v?(v.profit==null?"—":fmt(v.profit)):"",v&&v.profit!=null?(v.profit>=0?"pos":"neg"):"");
+    const si=tr.querySelector("[data-s]"); if(si!==act) si.value=e?e.q:"";
+  });
+  const st=dayStats(day);
+  $("d-u").textContent=fmt(st.u,Number.isInteger(st.u)?0:2);
+  $("d-rev").textContent=st.partial?"—":fmt(st.rev);
+  $("d-profit").textContent=st.partial?"—":fmt(st.pr);
+  const days=Object.keys(S.sales||{}).sort().reverse();
+  let tu=0,tr_=0,tp=0,part=false;
+  const rows=days.map(dk=>{const s=dayStats(dk);tu+=s.u;if(s.partial)part=true;else{tr_+=s.rev;tp+=s.pr;}
+    return `<tr data-day="${dk}"${dk===day?' class="cur"':""}><td>${pd(dk)?fd(pd(dk)):esc(dk)}</td><td class="r">${fmt(s.u,Number.isInteger(s.u)?0:2)}</td><td class="r">${s.partial?"—":fmt(s.rev)}</td><td class="r ${s.partial?"":(s.pr>=0?"pos":"neg")}">${s.partial?"—":fmt(s.pr)}</td></tr>`;}).join("");
+  $("hist").innerHTML=days.length?rows+`<tr><td><b>Total</b></td><td class="r"><b>${fmt(tu,Number.isInteger(tu)?0:2)}</b></td><td class="r"><b>${part?"—":fmt(tr_)}</b></td><td class="r"><b>${part?"—":fmt(tp)}</b></td></tr>`:
+    `<tr><td colspan="4" class="mut" style="padding:10px">No sales recorded yet. Type a quantity in the “Sold (day)” column.</td></tr>`;
+}
+$("sday").addEventListener("input",refresh);
+$("sday").addEventListener("change",refresh);
+$("stoday").onclick=()=>{$("sday").value=iso(todayD());refresh();};
+$("hist").onclick=e=>{const tr=e.target.closest("tr[data-day]");if(!tr)return;$("sday").value=tr.dataset.day;refresh();};
+
+// ================= cloud sync (JSONBin) =================
+const BIN="https://api.jsonbin.io/v3/b";
+let dirty=false, pt=null;
+function cfg(){
+  let c={};try{c=JSON.parse(localStorage.getItem(CFGK))||{};}catch(e){}
+  return {key:CLOUD.key||c.key||"",bin:CLOUD.bin||c.bin||""};
+}
+const linked=()=>{const c=cfg();return !!(c.key&&c.bin);};
+function setSync(st){
+  $("sync").textContent=!linked()?"☁ Not connected":st==="saving"?"☁ Saving…":st==="err"?"☁ Offline — saved on this device":"☁ Synced";
+}
+const payload=()=>({items:S.items,extra:n(S.extra),spread:!!S.spread,credits:S.credits,warn:n(S.warn),sales:S.sales||{},ts:S.ts||0});
+function queuePush(){
+  if(!linked()){setSync();return;}
+  dirty=true;setSync("saving");clearTimeout(pt);pt=setTimeout(push,700);
+}
+async function push(){
+  const c=cfg(); if(!linked()) return;
+  try{
+    const r=await fetch(BIN+"/"+c.bin,{method:"PUT",headers:{"Content-Type":"application/json","X-Master-Key":c.key},body:JSON.stringify(payload())});
+    if(!r.ok) throw 0;
+    dirty=false;setSync("ok");
+  }catch(e){setSync("err");}
+}
+async function pull(){
+  const c=cfg(); if(!linked()||dirty){setSync();return;}
+  try{
+    const r=await fetch(BIN+"/"+c.bin+"/latest",{headers:{"X-Master-Key":c.key}});
+    if(!r.ok) throw 0;
+    const rec=(await r.json()).record||{};
+    if(Array.isArray(rec.items)&&(rec.ts||0)>(S.ts||0)){
+      S.items=rec.items;S.extra=n(rec.extra);S.spread=rec.spread!==false;S.ts=rec.ts;
+      if(Array.isArray(rec.credits)) S.credits=rec.credits;
+      if(rec.warn!=null) S.warn=n(rec.warn);
+      if(rec.sales&&typeof rec.sales==="object") S.sales=rec.sales;
+      nid=1+Math.max(0,...S.items.map(i=>i.id));
+      $("extra").value=S.extra;$("spread").checked=S.spread;$("cwarn").value=S.warn;
+      render();renderCredit();save(false);
+    }else if((S.ts||0)>(rec.ts||0)||!Array.isArray(rec.items)){await push();return;}
+    setSync("ok");
+  }catch(e){setSync("err");}
+}
+const sync=()=>dirty?push():pull();
+async function createBin(key){
+  const r=await fetch(BIN,{method:"POST",headers:{"Content-Type":"application/json","X-Master-Key":key,"X-Bin-Private":"true","X-Bin-Name":"alex-carbon-pricing"},body:JSON.stringify(payload())});
+  const j=await r.json();
+  if(!r.ok||!j.metadata) throw new Error(j.message||"could not create the bin");
+  return j.metadata.id;
+}
+$("cloudbtn").onclick=()=>{
+  const p=$("cloud");p.hidden=!p.hidden;
+  const c=cfg();$("ckey").value=c.key||"";$("cbin").value=c.bin||"";
+};
+$("cconnect").onclick=async()=>{
+  const key=$("ckey").value.trim(); let bin=$("cbin").value.trim()||CLOUD.bin, m=$("cmsg");
+  if(!key){m.textContent="Paste your JSONBin Master Key first.";return;}
+  m.textContent="Connecting…";
+  try{
+    if(!bin){S.ts=Date.now();bin=await createBin(key);}
+    localStorage.setItem(CFGK,JSON.stringify({key,bin}));
+    $("cbin").value=bin;
+    await pull();
+    m.textContent="Connected. Now press “Copy phone link” and open that link on your iPhone.";
+  }catch(e){m.textContent="Could not connect: "+(e.message||"check the key and try again")+".";}
+};
+$("csync").onclick=async()=>{await sync();$("cmsg").textContent=$("sync").textContent;};
+$("cdisc").onclick=()=>{try{localStorage.removeItem(CFGK);}catch(e){}$("cmsg").textContent="Disconnected. Data stays on this device only.";setSync();};
+$("clink").onclick=async()=>{
+  const c=cfg(), m=$("cmsg");
+  if(!linked()){m.textContent="Connect cloud sync first.";return;}
+  if(location.protocol==="file:"){m.textContent="Upload this file to your website first, open it from there, then press this button.";return;}
+  const u=location.origin+location.pathname+"#sync="+encodeURIComponent(btoa(c.key+"|"+c.bin));
+  try{await navigator.clipboard.writeText(u);m.textContent="Link copied. Send it to your iPhone and open it in Safari. Keep it private, it holds your sync key.";}
+  catch(e){prompt("Copy this link:",u);}
+};
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&started&&!$("app").hidden)sync();});
+
+// ================= login =================
+let started=false;
+function showApp(on){$("login").hidden=on;$("app").hidden=!on;}
+function enter(){
+  showApp(true);
+  if(!started){
+    started=true;
+    $("rate").value=S.rate||"";
+    $("extra").value=S.extra;
+    $("spread").checked=!!S.spread;
+    $("cwarn").value=S.warn;$("sday").value=iso(todayD());
+    rateStatus();render();renderCredit();setSync();
+    setInterval(refreshAllCredit,300000);
+    if(!S.manual) fetchRate();
+    setInterval(()=>{if(!S.manual)fetchRate();},3600000);
+  }
+  sync();
+}
+function tryLogin(){
+  const u=$("lu").value.trim().toLowerCase(), p=$("lp").value;
+  if(u===LOGIN.user&&p===LOGIN.pass){
+    try{localStorage.setItem(AUTH,"1");}catch(e){}
+    $("lerr").textContent="";$("lp").value="";enter();
+  }else $("lerr").textContent="Wrong username or password.";
+}
+$("lgo").onclick=tryLogin;
+$("lp").addEventListener("keydown",e=>{if(e.key==="Enter")tryLogin();});
+$("lu").addEventListener("keydown",e=>{if(e.key==="Enter")$("lp").focus();});
+$("logout").onclick=()=>{try{localStorage.removeItem(AUTH);}catch(e){}showApp(false);};
+let signed=false;try{signed=localStorage.getItem(AUTH)==="1";}catch(e){}
+if(signed) enter(); else showApp(false);
+</script>
+</body>
+</html>
